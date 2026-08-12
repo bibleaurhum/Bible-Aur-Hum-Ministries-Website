@@ -1,8 +1,23 @@
 import type { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.bibleaurhum.com";
-
+  const questions = await prisma.question.findMany({
+    where: {
+      status: "PUBLISHED",
+    },
+    select: {
+      slug: true,
+      updatedAt: true,
+    },
+  });
+    const questionUrls: MetadataRoute.Sitemap = questions.map((question) => ({
+    url: `${baseUrl}/questions/${question.slug}`,
+    lastModified: question.updatedAt,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
   return [
     {
       url: baseUrl,
@@ -40,11 +55,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    {
+        {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
+
+    ...questionUrls,
   ];
 }
