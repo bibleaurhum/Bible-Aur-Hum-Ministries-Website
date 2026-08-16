@@ -75,7 +75,7 @@ export default async function CategoryPage({ params }: Props) {
         )}
 
         <div className="mt-12 space-y-6">
-          {category.questions.map((question) => (
+          {category.questions.map((question: { id: number; slug: string; title: string; shortAnswer: string | null }) => (
             <Link
               key={question.id}
               href={`/questions/${question.slug}`}
