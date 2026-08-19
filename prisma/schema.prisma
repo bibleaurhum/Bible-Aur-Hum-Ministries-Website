@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+
+  questions   Question[]
+  lectures    Lecture[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Question {
+  id             Int      @id @default(autoincrement())
+
+  title          String
+  slug           String   @unique
+
+  shortAnswer    String
+  answer         String
+
+  youtubeUrl     String?
+
+  seoTitle       String?
+  seoDescription String?
+
+  featured       Boolean  @default(false)
+
+  status         Status   @default(DRAFT)
+
+  categoryId     Int
+  category       Category @relation(fields: [categoryId], references: [id])
+
+  tags           QuestionTag[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Lecture {
+  id               Int      @id @default(autoincrement())
+
+  title            String
+  slug             String   @unique
+
+  shortDescription String?
+  content          String?
+
+  youtubeId        String   @unique
+
+  thumbnail        String?
+
+  duration         String?
+
+  speaker          String?
+
+  bibleReference   String?
+
+  seoTitle         String?
+  seoDescription   String?
+
+  featured         Boolean  @default(false)
+
+  views            Int      @default(0)
+
+  status           Status   @default(DRAFT)
+
+  categoryId       Int
+  category         Category @relation(fields: [categoryId], references: [id])
+
+  tags             LectureTag[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+
+  name      String   @unique
+  slug      String   @unique
+
+  questions QuestionTag[]
+  lectures  LectureTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuestionTag {
+  questionId Int
+  tagId      Int
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([questionId, tagId])
+}
+
+model LectureTag {
+  lectureId Int
+  tagId     Int
+
+  lecture Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([lectureId, tagId])
+}
