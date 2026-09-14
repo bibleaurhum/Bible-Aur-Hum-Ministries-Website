@@ -1,12 +1,14 @@
-import "dotenv/config";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString =
-  process.env.DATABASE_URL || "file:./prisma/dev.db";
+const connectionString = `${process.env.DATABASE_URL}${process.env.DATABASE_URL?.includes("?") ? "&" : "?"}sslmode=require`;
 
-const adapter = new PrismaBetterSqlite3({
-  url: connectionString,
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+
+const adapter = new PrismaPg({
+  connectionString,
 });
 
 const globalForPrisma = globalThis as unknown as {

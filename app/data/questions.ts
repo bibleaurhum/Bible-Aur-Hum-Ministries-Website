@@ -1,4 +1,6 @@
-export const questions = [
+import { Question } from "../types/question";
+
+export const questions: Question[] = [
  {
   id: 1,
   category: "God",
