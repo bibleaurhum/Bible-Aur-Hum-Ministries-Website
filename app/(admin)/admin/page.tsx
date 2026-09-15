@@ -6,6 +6,23 @@ export default async function AdminDashboard() {
   const lecturesCount = await prisma.lecture.count();
   const categoriesCount = await prisma.category.count();
 
+  const publishedQuestionsCount = await prisma.question.count({
+    where: { status: "PUBLISHED" },
+  });
+
+  const publishedLecturesCount = await prisma.lecture.count({
+    where: { status: "PUBLISHED" },
+  });
+
+  const publishedBibleStudiesCount = await prisma.bibleStudy.count({
+    where: { status: "PUBLISHED" },
+  });
+
+  const publishedContentCount =
+    publishedQuestionsCount +
+    publishedLecturesCount +
+    publishedBibleStudiesCount;
+
   return (
     <div>
       <div className="mb-8">
@@ -39,8 +56,8 @@ export default async function AdminDashboard() {
 
         <DashboardCard
           title="Published Content"
-          value="0"
-          description="Coming next"
+          value={publishedContentCount}
+          description="Published questions, lectures & Bible studies"
         />
       </div>
     </div>
