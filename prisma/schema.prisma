@@ -7,14 +7,15 @@ datasource db {
 }
 
 model Category {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique
-  slug        String     @unique
-  description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  lectures    Lecture[]
-  questions   Question[]
+  id           Int          @id @default(autoincrement())
+  name         String       @unique
+  slug         String       @unique
+  description  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  lectures     Lecture[]
+  questions    Question[]
+  bibleStudies BibleStudy[]
 }
 
 model Question {
@@ -59,13 +60,14 @@ model Lecture {
 }
 
 model Tag {
-  id        Int           @id @default(autoincrement())
-  name      String        @unique
-  slug      String        @unique
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  lectures  LectureTag[]
-  questions QuestionTag[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  slug         String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  lectures     LectureTag[]
+  questions    QuestionTag[]
+  bibleStudies BibleStudyTag[]
 }
 
 model QuestionTag {
@@ -84,6 +86,34 @@ model LectureTag {
   tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([lectureId, tagId])
+}
+
+model BibleStudy {
+  id               Int            @id @default(autoincrement())
+  title            String
+  slug             String         @unique
+  shortDescription String?
+  content          String?
+  featuredImage    String?
+  bibleReference   String?
+  seoTitle         String?
+  seoDescription   String?
+  featured         Boolean        @default(false)
+  status           Status         @default(DRAFT)
+  categoryId       Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  category         Category       @relation(fields: [categoryId], references: [id])
+  tags             BibleStudyTag[]
+}
+
+model BibleStudyTag {
+  bibleStudyId Int
+  tagId        Int
+  bibleStudy   BibleStudy @relation(fields: [bibleStudyId], references: [id], onDelete: Cascade)
+  tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([bibleStudyId, tagId])
 }
 
 enum Status {
