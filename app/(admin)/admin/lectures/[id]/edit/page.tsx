@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { updateLecture } from "../../actions";
 
 type Props = {
   params: Promise<{
@@ -9,10 +10,11 @@ type Props = {
 
 export default async function EditLecturePage({ params }: Props) {
   const { id } = await params;
+  const lectureId = Number(id);
 
   const lecture = await prisma.lecture.findUnique({
     where: {
-      id: Number(id),
+      id: lectureId,
     },
   });
 
@@ -38,8 +40,10 @@ export default async function EditLecturePage({ params }: Props) {
         </p>
       </div>
 
-      <form className="space-y-6 rounded-xl border bg-white p-8 shadow-sm">
-
+      <form
+        action={updateLecture.bind(null, lectureId)}
+        className="space-y-6 rounded-xl border bg-white p-8 shadow-sm"
+      >
         <div>
           <label className="mb-2 block font-medium">
             Lecture Title
@@ -47,8 +51,10 @@ export default async function EditLecturePage({ params }: Props) {
 
           <input
             type="text"
+            name="title"
             defaultValue={lecture.title}
             className="w-full rounded-lg border px-4 py-3"
+            required
           />
         </div>
 
@@ -59,8 +65,10 @@ export default async function EditLecturePage({ params }: Props) {
 
           <input
             type="text"
+            name="slug"
             defaultValue={lecture.slug}
             className="w-full rounded-lg border px-4 py-3"
+            required
           />
         </div>
 
@@ -70,6 +78,7 @@ export default async function EditLecturePage({ params }: Props) {
           </label>
 
           <textarea
+            name="shortDescription"
             rows={4}
             defaultValue={lecture.shortDescription ?? ""}
             className="w-full rounded-lg border px-4 py-3"
@@ -82,8 +91,10 @@ export default async function EditLecturePage({ params }: Props) {
           </label>
 
           <select
+            name="categoryId"
             defaultValue={lecture.categoryId}
             className="w-full rounded-lg border px-4 py-3"
+            required
           >
             {categories.map((category) => (
               <option
@@ -103,8 +114,10 @@ export default async function EditLecturePage({ params }: Props) {
 
           <input
             type="text"
+            name="youtubeId"
             defaultValue={lecture.youtubeId}
             className="w-full rounded-lg border px-4 py-3"
+            required
           />
         </div>
 
@@ -114,8 +127,10 @@ export default async function EditLecturePage({ params }: Props) {
           </label>
 
           <select
+            name="status"
             defaultValue={lecture.status}
             className="w-full rounded-lg border px-4 py-3"
+            required
           >
             <option value="DRAFT">Draft</option>
             <option value="PUBLISHED">Published</option>
@@ -124,16 +139,15 @@ export default async function EditLecturePage({ params }: Props) {
         </div>
 
         <div className="flex items-center gap-3">
-
           <input
             type="checkbox"
+            name="featured"
             defaultChecked={lecture.featured}
           />
 
           <label>
             Featured Lecture
           </label>
-
         </div>
 
         <button
@@ -142,7 +156,6 @@ export default async function EditLecturePage({ params }: Props) {
         >
           Update Lecture
         </button>
-
       </form>
     </div>
   );
