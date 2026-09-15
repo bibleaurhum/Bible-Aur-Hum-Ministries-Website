@@ -89,11 +89,12 @@ export default async function LecturesPage() {
 
                 <td className="px-6 py-4 text-right">
 
-                  <button
-                    className="text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </button>
+                  <Link
+  href={`/admin/lectures/${lecture.id}/edit`}
+  className="text-blue-600 hover:underline"
+>
+  Edit
+</Link>
 
                 </td>
 
