@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { updateLecture } from "../../actions";
 
@@ -87,6 +87,20 @@ export default async function EditLecturePage({ params }: Props) {
 
         <div>
           <label className="mb-2 block font-medium">
+            Full Lecture Content
+          </label>
+
+          <textarea
+            name="content"
+            rows={14}
+            defaultValue={lecture.content ?? ""}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="Write the full lecture content here..."
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
             Category
           </label>
 
@@ -117,7 +131,94 @@ export default async function EditLecturePage({ params }: Props) {
             name="youtubeId"
             defaultValue={lecture.youtubeId}
             className="w-full rounded-lg border px-4 py-3"
+            placeholder="Example: dQw4w9WgXcQ"
             required
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Thumbnail URL
+          </label>
+
+          <input
+            type="text"
+            name="thumbnail"
+            defaultValue={lecture.thumbnail ?? ""}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="https://..."
+          />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block font-medium">
+              Duration
+            </label>
+
+            <input
+              type="text"
+              name="duration"
+              defaultValue={lecture.duration ?? ""}
+              className="w-full rounded-lg border px-4 py-3"
+              placeholder="Example: 42:15"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block font-medium">
+              Speaker
+            </label>
+
+            <input
+              type="text"
+              name="speaker"
+              defaultValue={lecture.speaker ?? ""}
+              className="w-full rounded-lg border px-4 py-3"
+              placeholder="Speaker name"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Bible Reference
+          </label>
+
+          <input
+            type="text"
+            name="bibleReference"
+            defaultValue={lecture.bibleReference ?? ""}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="Example: John 1:1-14"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            SEO Title
+          </label>
+
+          <input
+            type="text"
+            name="seoTitle"
+            defaultValue={lecture.seoTitle ?? ""}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="SEO title for search engines"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            SEO Description
+          </label>
+
+          <textarea
+            name="seoDescription"
+            rows={4}
+            defaultValue={lecture.seoDescription ?? ""}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="SEO description for search engines"
           />
         </div>
 

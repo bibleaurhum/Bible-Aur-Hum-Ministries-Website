@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import { createLecture } from "../actions";
 
 export default async function NewLecturePage() {
@@ -33,6 +33,7 @@ export default async function NewLecturePage() {
             type="text"
             name="title"
             className="w-full rounded-lg border px-4 py-3"
+            placeholder="Enter lecture title"
             required
           />
         </div>
@@ -46,6 +47,7 @@ export default async function NewLecturePage() {
             type="text"
             name="slug"
             className="w-full rounded-lg border px-4 py-3"
+            placeholder="example-lecture-title"
             required
           />
         </div>
@@ -59,6 +61,20 @@ export default async function NewLecturePage() {
             name="shortDescription"
             rows={4}
             className="w-full rounded-lg border px-4 py-3"
+            placeholder="Brief description of the lecture"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Full Lecture Content
+          </label>
+
+          <textarea
+            name="content"
+            rows={14}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="Write the full lecture content here..."
           />
         </div>
 
@@ -99,6 +115,114 @@ export default async function NewLecturePage() {
             placeholder="Example: dQw4w9WgXcQ"
             required
           />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Thumbnail URL
+          </label>
+
+          <input
+            type="text"
+            name="thumbnail"
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="https://..."
+          />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block font-medium">
+              Duration
+            </label>
+
+            <input
+              type="text"
+              name="duration"
+              className="w-full rounded-lg border px-4 py-3"
+              placeholder="Example: 42:15"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block font-medium">
+              Speaker
+            </label>
+
+            <input
+              type="text"
+              name="speaker"
+              className="w-full rounded-lg border px-4 py-3"
+              placeholder="Speaker name"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Bible Reference
+          </label>
+
+          <input
+            type="text"
+            name="bibleReference"
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="Example: John 1:1-14"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            SEO Title
+          </label>
+
+          <input
+            type="text"
+            name="seoTitle"
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="SEO title for search engines"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            SEO Description
+          </label>
+
+          <textarea
+            name="seoDescription"
+            rows={4}
+            className="w-full rounded-lg border px-4 py-3"
+            placeholder="SEO description for search engines"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Status
+          </label>
+
+          <select
+            name="status"
+            defaultValue="DRAFT"
+            className="w-full rounded-lg border px-4 py-3"
+            required
+          >
+            <option value="DRAFT">Draft</option>
+            <option value="PUBLISHED">Published</option>
+            <option value="ARCHIVED">Archived</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="featured"
+          />
+
+          <label>
+            Featured Lecture
+          </label>
         </div>
 
         <button
