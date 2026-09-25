@@ -16,6 +16,7 @@ model Category {
   lectures     Lecture[]
   questions    Question[]
   bibleStudies BibleStudy[]
+  articles     Article[]
 }
 
 model Question {
@@ -83,7 +84,7 @@ model LectureTag {
   lectureId Int
   tagId     Int
   lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([lectureId, tagId])
 }
@@ -114,6 +115,25 @@ model BibleStudyTag {
   tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([bibleStudyId, tagId])
+}
+
+model Article {
+  id               Int          @id @default(autoincrement())
+  title            String
+  slug             String       @unique
+  shortDescription String?
+  content          String?
+  featuredImage    String?
+  bibleReference   String?
+  seoTitle         String?
+  seoDescription   String?
+  featured         Boolean      @default(false)
+  views            Int          @default(0)
+  status           Status       @default(DRAFT)
+  categoryId       Int
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  category         Category     @relation(fields: [categoryId], references: [id])
 }
 
 enum Status {
