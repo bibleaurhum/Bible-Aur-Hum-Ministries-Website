@@ -28,10 +28,8 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-
           <Image
             src="/images/logo.png"
             alt="Bible Aur Hum Logo"
@@ -50,54 +48,88 @@ export default function Header() {
               Ministries Foundation
             </p>
           </div>
-
         </Link>
 
         {/* Navigation */}
         <nav>
-          <ul className="flex items-center gap-8 font-medium text-gray-700">
-
+          <ul className="flex items-center gap-7 font-medium text-gray-700">
             <li>
-              <Link href="/" className="hover:text-blue-700 transition">
+              <Link
+                href="/"
+                className="transition hover:text-blue-700"
+              >
                 Home
               </Link>
             </li>
 
             <li>
-              <Link href="/about" className="hover:text-blue-700 transition">
+              <Link
+                href="/about"
+                className="transition hover:text-blue-700"
+              >
                 About
               </Link>
             </li>
 
             <li>
-              <Link href="/questions" className="hover:text-blue-700 transition">
+              <Link
+                href="/questions"
+                className="transition hover:text-blue-700"
+              >
                 Questions
               </Link>
             </li>
 
             <li>
-              <Link href="/sermons" className="hover:text-blue-700 transition">
-                Sermons
+              <Link
+                href="/lectures"
+                className="transition hover:text-blue-700"
+              >
+                Lectures
               </Link>
             </li>
 
             <li>
               <Link
                 href="/bible-study"
-                className="hover:text-blue-700 transition"
+                className="transition hover:text-blue-700"
               >
                 Bible Study
               </Link>
             </li>
 
             <li>
-              <Link href="/videos" className="hover:text-blue-700 transition">
+              <Link
+                href="/articles"
+                className="transition hover:text-blue-700"
+              >
+                Articles
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/videos"
+                className="transition hover:text-blue-700"
+              >
                 Videos
               </Link>
             </li>
 
             <li>
-              <Link href="/contact" className="hover:text-blue-700 transition">
+              <Link
+                href="/prayer"
+                className="transition hover:text-blue-700"
+              >
+                Prayer
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/contact"
+                className="transition hover:text-blue-700"
+              >
                 Contact
               </Link>
             </li>
@@ -105,15 +137,13 @@ export default function Header() {
             <li>
               <Link
                 href="/support"
-                className="rounded-lg bg-red-600 px-5 py-2 text-white font-semibold transition hover:bg-red-700"
+                className="rounded-lg bg-red-600 px-5 py-2 font-semibold text-white transition hover:bg-red-700"
               >
-                Support the Ministry
+                Support
               </Link>
             </li>
-
           </ul>
         </nav>
-
       </div>
     </header>
   );
