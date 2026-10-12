@@ -1,7 +1,9 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section
-      className="relative h-screen bg-cover bg-center"
+      className="relative flex min-h-[780px] items-center justify-center bg-cover bg-center py-12 sm:min-h-[750px] sm:py-16 lg:h-screen lg:min-h-[750px] lg:py-0"
       style={{
         backgroundImage: "url('/images/hero-bg.png')",
       }}
@@ -10,40 +12,42 @@ export default function Hero() {
       <div className="absolute inset-0 bg-black/60"></div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full items-center justify-center px-6">
-        <div className="max-w-5xl text-center text-white">
-
-          <p className="uppercase tracking-[0.4em] text-yellow-300 font-semibold">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-center px-4 sm:px-6">
+        <div className="w-full max-w-5xl text-center text-white">
+          <p className="mx-auto max-w-3xl text-sm font-semibold uppercase leading-relaxed tracking-[0.2em] text-yellow-300 sm:text-base sm:tracking-[0.4em]">
             Bible Aur Hum Ministries Foundation
           </p>
 
-          <h1 className="mt-6 text-5xl md:text-7xl font-extrabold leading-tight">
+          <h1 className="mt-6 text-4xl font-extrabold leading-tight sm:text-5xl md:text-7xl">
             Proclaiming the Truth
             <br />
-            of God's Word
+            of God&apos;s Word
           </h1>
 
-          <p className="mt-8 text-xl md:text-2xl leading-9 text-gray-200">
-            Teaching God's Word faithfully, equipping believers with biblical
+          <p className="mx-auto mt-6 max-w-4xl text-base leading-7 text-gray-200 sm:mt-8 sm:text-xl sm:leading-9 md:text-2xl">
+            Teaching God&apos;s Word faithfully, equipping believers with biblical
             truth, and sharing the Gospel of Jesus Christ with the world.
           </p>
 
-          <p className="mt-10 text-2xl md:text-3xl font-semibold text-yellow-300">
+          <p className="mt-7 text-xl font-semibold leading-relaxed text-yellow-300 sm:mt-10 sm:text-2xl md:text-3xl">
             خدا کے کلام کی سچائی کی منادی
           </p>
 
-          <div className="mt-14 flex flex-col sm:flex-row justify-center gap-5">
-
-            <button className="rounded-xl bg-red-600 px-8 py-4 text-lg font-semibold hover:bg-red-700 transition">
+          <div className="mx-auto mt-5 flex w-full max-w-md flex-col justify-center gap-3 sm:mt-14 sm:max-w-none sm:flex-row sm:gap-5">
+            <Link
+              href="/lectures"
+              className="rounded-xl bg-red-600 px-8 py-4 text-center text-lg font-semibold transition hover:bg-red-700"
+            >
               Watch Sermons
-            </button>
+            </Link>
 
-            <button className="rounded-xl border-2 border-white px-8 py-4 text-lg font-semibold hover:bg-white hover:text-black transition">
+            <Link
+              href="/prayer"
+              className="rounded-xl border-2 border-white px-8 py-4 text-center text-lg font-semibold transition hover:bg-white hover:text-black"
+            >
               Request Prayer
-            </button>
-
+            </Link>
           </div>
-
         </div>
       </div>
     </section>
