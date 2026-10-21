@@ -99,14 +99,17 @@ export default function SupportOptions() {
             </p>
           </a>
 
-          {/* Prayer */}
-          <div className="p-8 bg-green-50 rounded-2xl text-center shadow">
+                    {/* Prayer */}
+          <a
+            href="/prayer"
+            className="block p-8 bg-green-50 rounded-2xl text-center shadow hover:shadow-xl transition"
+          >
             <Heart className="mx-auto w-12 h-12 text-green-600" />
             <h3 className="mt-6 text-xl font-bold">Prayer Support</h3>
             <p className="mt-3 text-gray-600">
               Even if you cannot give, you can still support through prayer.
             </p>
-          </div>
+          </a>
 
         </div>
 
