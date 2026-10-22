@@ -37,7 +37,7 @@ export default function Contact() {
               <div>
                 <h3 className="font-semibold">Email</h3>
                 <p className="text-gray-400">
-                  contact@bibleaurhum.com
+                  bibleaurhum@gmail.com
                 </p>
               </div>
             </div>
@@ -45,10 +45,10 @@ export default function Contact() {
             <div className="flex items-center gap-4">
               <Phone className="text-red-500 w-7 h-7" />
               <div>
-                <h3 className="font-semibold">Phone</h3>
-                <p className="text-gray-400">
-                  +973 XXXXXXXX
-                </p>
+                <h3 className="font-semibold">Contact</h3>
+<p className="text-gray-400">
+  Please contact us by email.
+</p>
               </div>
             </div>
 
@@ -56,9 +56,9 @@ export default function Contact() {
               <MapPin className="text-red-500 w-7 h-7" />
               <div>
                 <h3 className="font-semibold">Location</h3>
-                <p className="text-gray-400">
-                  Kingdom of Bahrain
-                </p>
+<p className="text-gray-400">
+  Online Ministry
+</p>
               </div>
             </div>
 
