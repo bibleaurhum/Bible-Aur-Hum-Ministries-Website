@@ -49,10 +49,13 @@ export const metadata: Metadata = {
 
   creator: "Bible Aur Hum Ministries",
   publisher: "Bible Aur Hum Ministries",
-
   robots: {
     index: true,
     follow: true,
+  },
+
+  alternates: {
+    canonical: "/",
   },
 
   openGraph: {
