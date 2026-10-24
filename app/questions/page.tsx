@@ -12,6 +12,11 @@ export default async function QuestionsPage({
 
   const currentPage = Math.max(Number(page) || 1, 1);
   const pageSize = 20;
+  const totalQuestions = await prisma.question.count({
+  where: {
+    status: "PUBLISHED",
+  },
+});
   const questions = await prisma.question.findMany({
   where: {
     status: "PUBLISHED",
@@ -90,7 +95,7 @@ export default async function QuestionsPage({
           <div className="inline-block rounded-xl bg-blue-700 px-8 py-4 text-white shadow-lg">
 
             <h2 className="text-3xl font-bold">
-              {questions.length}
+              {totalQuestions}
             </h2>
 
             <p className="mt-2">
