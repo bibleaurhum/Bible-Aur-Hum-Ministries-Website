@@ -1,3 +1,4 @@
+
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import QuestionForm from "@/components/admin/QuestionForm";
@@ -12,7 +13,6 @@ export default async function EditQuestionPage({
   params,
 }: PageProps) {
   const { id } = await params;
-
   const questionId = Number(id);
 
   const question = await prisma.question.findUnique({
@@ -51,6 +51,10 @@ export default async function EditQuestionPage({
     const slug = formData.get("slug") as string;
     const shortAnswer = formData.get("shortAnswer") as string;
     const answer = formData.get("answer") as string;
+
+    const bibleReferences =
+      formData.get("bibleReferences")?.toString().trim() || null;
+
     const youtubeUrl = formData.get("youtubeUrl") as string;
     const seoTitle = formData.get("seoTitle") as string;
     const seoDescription = formData.get("seoDescription") as string;
@@ -64,7 +68,8 @@ export default async function EditQuestionPage({
 
     const selectedTags = formData
       .getAll("tags")
-      .map((id) => Number(id));
+      .map((id) => Number(id))
+      .filter((id) => Number.isInteger(id) && id > 0);
 
     await prisma.question.update({
       where: {
@@ -75,6 +80,7 @@ export default async function EditQuestionPage({
         slug,
         shortAnswer,
         answer,
+        bibleReferences,
         youtubeUrl: youtubeUrl || null,
         seoTitle: seoTitle || null,
         seoDescription: seoDescription || null,

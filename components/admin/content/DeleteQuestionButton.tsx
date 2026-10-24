@@ -1,4 +1,7 @@
+
 "use client";
+
+import { deleteQuestion } from "@/app/(admin)/admin/questions/new/actions";
 
 type DeleteQuestionButtonProps = {
   questionId: number;
@@ -7,11 +10,10 @@ type DeleteQuestionButtonProps = {
 export default function DeleteQuestionButton({
   questionId,
 }: DeleteQuestionButtonProps) {
+  const deleteQuestionWithId = deleteQuestion.bind(null, questionId);
+
   return (
-    <form
-      action={`/admin/questions/${questionId}/delete`}
-      method="POST"
-    >
+    <form action={deleteQuestionWithId}>
       <button
         type="submit"
         onClick={(e) => {

@@ -13,22 +13,27 @@ type Question = {
   };
 };
 
+type QuestionCategory = {
+  name: string;
+  slug: string;
+};
+
 type QuestionSearchProps = {
   questions: Question[];
+  categories: QuestionCategory[];
 };
 
 export default function QuestionSearch({
   questions,
+  categories: allCategories,
 }: QuestionSearchProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All Categories");
 
   const categories = [
-    "All Categories",
-    ...Array.from(
-      new Set(questions.map((question) => question.category.name))
-    ).sort(),
-  ];
+  "All Categories",
+  ...allCategories.map((category) => category.name).sort(),
+];
 
   const filteredQuestions = questions.filter((question) => {
     const searchText = search.toLowerCase().trim();

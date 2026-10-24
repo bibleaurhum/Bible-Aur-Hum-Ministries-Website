@@ -1,3 +1,4 @@
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
@@ -11,8 +12,27 @@ export default async function QuestionDetailsPage({
   params,
 }: PageProps) {
   const { id } = await params;
-
   const questionId = Number(id);
+
+  // Validate the URL parameter before querying Prisma.
+  if (!Number.isInteger(questionId) || questionId <= 0) {
+    return (
+      <div className="p-8">
+        <h1 className="text-2xl font-bold">
+          Invalid question ID
+        </h1>
+        <p className="mt-2 text-gray-600">
+          Please return to the questions list and open a valid question.
+        </p>
+        <Link
+          href="/admin/questions"
+          className="mt-4 inline-block text-blue-600 underline"
+        >
+          Back to Questions
+        </Link>
+      </div>
+    );
+  }
 
   const question = await prisma.question.findUnique({
     where: {
@@ -29,6 +49,12 @@ export default async function QuestionDetailsPage({
         <h1 className="text-2xl font-bold">
           Question not found
         </h1>
+        <Link
+          href="/admin/questions"
+          className="mt-4 inline-block text-blue-600 underline"
+        >
+          Back to Questions
+        </Link>
       </div>
     );
   }
@@ -77,7 +103,6 @@ export default async function QuestionDetailsPage({
         <h2 className="mb-6 text-2xl font-bold text-gray-900">
           Short Answer
         </h2>
-
         <p className="whitespace-pre-line leading-8 text-gray-700">
           {question.shortAnswer}
         </p>
@@ -88,11 +113,22 @@ export default async function QuestionDetailsPage({
         <h2 className="mb-6 text-2xl font-bold text-gray-900">
           Full Answer
         </h2>
-
         <div className="whitespace-pre-line leading-8 text-gray-700">
           {question.answer}
         </div>
       </div>
+
+      {/* Key Bible References */}
+      {question.bibleReferences && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-8 shadow-sm">
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            Key Bible References
+          </h2>
+          <div className="whitespace-pre-line leading-8 text-gray-700">
+            {question.bibleReferences}
+          </div>
+        </div>
+      )}
 
       {/* YouTube Video */}
       {question.youtubeUrl && (
@@ -100,7 +136,6 @@ export default async function QuestionDetailsPage({
           <h2 className="mb-6 text-2xl font-bold text-gray-900">
             YouTube Video
           </h2>
-
           <a
             href={question.youtubeUrl}
             target="_blank"
@@ -120,10 +155,7 @@ export default async function QuestionDetailsPage({
 
         <div className="space-y-6">
           <div>
-            <p className="font-medium text-gray-700">
-              SEO Title
-            </p>
-
+            <p className="font-medium text-gray-700">SEO Title</p>
             <p className="mt-2 text-gray-600">
               {question.seoTitle || "Not provided"}
             </p>
@@ -133,7 +165,6 @@ export default async function QuestionDetailsPage({
             <p className="font-medium text-gray-700">
               SEO Description
             </p>
-
             <p className="mt-2 text-gray-600">
               {question.seoDescription || "Not provided"}
             </p>

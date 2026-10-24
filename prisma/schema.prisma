@@ -26,6 +26,7 @@ model Question {
   shortAnswer    String
   answer         String
   youtubeUrl     String?
+  bibleReferences String?
   seoTitle       String?
   seoDescription String?
   featured       Boolean       @default(false)

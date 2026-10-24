@@ -1,13 +1,25 @@
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
 
 export async function createQuestion(formData: FormData) {
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
   const shortAnswer = formData.get("shortAnswer") as string;
   const answer = formData.get("answer") as string;
+  const bibleReferences =
+    formData.get("bibleReferences")?.toString().trim() || null;
   const youtubeUrl = formData.get("youtubeUrl") as string;
   const categoryId = Number(formData.get("categoryId"));
   const seoTitle = formData.get("seoTitle") as string;
@@ -19,9 +31,36 @@ export async function createQuestion(formData: FormData) {
     | "PUBLISHED"
     | "ARCHIVED";
 
-  const tags = formData
+  // Read typed tag names and selected existing tag IDs.
+  const typedTags = (formData.get("newTags")?.toString() || "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+  const selectedTagIds = formData
     .getAll("tags")
-    .map((id) => Number(id));
+    .map((id) => Number(id))
+    .filter((id) => Number.isInteger(id) && id > 0);
+
+  // Create missing tags and reuse existing ones.
+  const tagIds = new Set(selectedTagIds);
+
+  for (const name of typedTags) {
+    const tagSlug = slugify(name);
+
+    if (!tagSlug) continue;
+
+    const tag = await prisma.tag.upsert({
+      where: { slug: tagSlug },
+      update: {},
+      create: {
+        name,
+        slug: tagSlug,
+      },
+    });
+
+    tagIds.add(tag.id);
+  }
 
   await prisma.question.create({
     data: {
@@ -29,19 +68,17 @@ export async function createQuestion(formData: FormData) {
       slug,
       shortAnswer,
       answer,
+      bibleReferences,
       youtubeUrl: youtubeUrl || null,
       categoryId,
       seoTitle: seoTitle || null,
       seoDescription: seoDescription || null,
       featured,
       status,
-
       tags: {
-        create: tags.map((tagId) => ({
+        create: [...tagIds].map((tagId) => ({
           tag: {
-            connect: {
-              id: tagId,
-            },
+            connect: { id: tagId },
           },
         })),
       },

@@ -27,7 +27,11 @@ export default async function QuestionsPage({
       createdAt: "desc",
     },
   });
-
+  const allCategories = await prisma.category.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
   const categories = questions.reduce(
     (groups, question) => {
       const categoryName = question.category.name;
@@ -75,7 +79,10 @@ export default async function QuestionsPage({
           </p>
 
         </div>
-<QuestionSearch questions={questions} />
+<QuestionSearch
+  questions={questions}
+  categories={allCategories}
+/>
         {/* Total Questions */}
 
         <div className="mt-12 text-center">
