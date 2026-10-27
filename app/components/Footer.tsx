@@ -76,11 +76,22 @@ export default function Footer() {
                 <FaInstagram />
               </a>
 
-              <a href="#" className="hover:text-blue-400 transition">
-                <FaLinkedin />
-              </a>
+              <a
+  href="https://www.linkedin.com/in/bible-aur-hum-965a4a415/"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="LinkedIn"
+  className="hover:text-blue-400 transition"
+>
+  <FaLinkedin />
+</a>
 
-              <a href="#" className="hover:text-green-500 transition">
+              <a
+  href="https://www.facebook.com/profile.php?id=61590791038308"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="hover:text-blue-500 transition"
+>
                 <FaWhatsapp />
               </a>
 
