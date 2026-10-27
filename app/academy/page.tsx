@@ -1,29 +1,52 @@
 
 import Link from "next/link";
 
+
 const programs = [
   {
     number: "01",
-    title: "Certificate Programs",
+    title: "Introduction to the Bible",
     description:
-      "Study biblical foundations, Christian doctrine, Bible interpretation, and Christian apologetics through structured learning.",
-    label: "Short courses",
+      "Explore the structure of the Bible, its major themes, key people, historical background, and central message.",
+    label: "Beginner",
   },
   {
     number: "02",
-    title: "Diploma Programs",
+    title: "Foundations of Christian Doctrine",
     description:
-      "Explore more in-depth biblical studies, theology, ministry leadership, and practical Christian service.",
-    label: "Advanced study",
+      "Study foundational Christian beliefs, including God, Jesus Christ, salvation, the Holy Spirit, and the Church.",
+    label: "Beginner",
   },
   {
     number: "03",
-    title: "Degree Pathways",
+    title: "How to Interpret the Bible",
     description:
-      "Explore opportunities for formal theological education through appropriately authorized and recognized educational institutions.",
-    label: "Further education",
+      "Learn to examine biblical context, literary genres, historical background, and Scripture passages responsibly.",
+    label: "Beginner to intermediate",
+  },
+  {
+    number: "04",
+    title: "Christian Apologetics",
+    description:
+      "Explore how to explain and defend Christian beliefs through biblical study, reasoned arguments, and respectful dialogue.",
+    label: "Intermediate",
+  },
+  {
+    number: "05",
+    title: "Life and Teachings of Jesus Christ",
+    description:
+      "Study the life, ministry, parables, miracles, death, and resurrection of Jesus Christ through the Gospels.",
+    label: "Beginner",
+  },
+  {
+    number: "06",
+    title: "Christian Ministry and Leadership",
+    description:
+      "Explore servant leadership, Christian character, pastoral responsibilities, teaching, and practical ministry.",
+    label: "Intermediate",
   },
 ];
+
 
 export default function AcademyPage() {
   return (
@@ -100,7 +123,17 @@ export default function AcademyPage() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-7 md:grid-cols-3">
+          <div className="mt-8 mb-6 rounded-xl border border-amber-200 bg-amber-50 p-5">
+  <p className="font-semibold text-amber-900">
+    Planned Courses — Enrollment Not Yet Open
+  </p>
+  <p className="mt-2 text-sm leading-6 text-amber-800">
+    These courses are under development. Course availability, enrollment
+    dates, fees, and requirements will be announced when confirmed.
+  </p>
+</div>
+
+<div className="mt-12 grid gap-7 md:grid-cols-3">
             {programs.map((program) => (
               <article
                 key={program.number}
