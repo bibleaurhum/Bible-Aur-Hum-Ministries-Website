@@ -11,6 +11,8 @@ const navigationLinks = [
   { href: "/lectures", label: "Lectures" },
   { href: "/bible-study", label: "Bible Study" },
   { href: "/articles", label: "Articles" },
+  { href: "/academy", label: "Academy" },
+  { href: "/jobs", label: "Job Opportunities" },
   { href: "/videos", label: "Videos" },
   { href: "/prayer", label: "Prayer" },
   { href: "/contact", label: "Contact" },
