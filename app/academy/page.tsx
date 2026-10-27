@@ -1,7 +1,6 @@
 
 import Link from "next/link";
 
-
 const programs = [
   {
     number: "01",
@@ -46,7 +45,6 @@ const programs = [
     label: "Intermediate",
   },
 ];
-
 
 export default function AcademyPage() {
   return (
@@ -124,16 +122,18 @@ export default function AcademyPage() {
           </div>
 
           <div className="mt-8 mb-6 rounded-xl border border-amber-200 bg-amber-50 p-5">
-  <p className="font-semibold text-amber-900">
-    Planned Courses — Enrollment Not Yet Open
-  </p>
-  <p className="mt-2 text-sm leading-6 text-amber-800">
-    These courses are under development. Course availability, enrollment
-    dates, fees, and requirements will be announced when confirmed.
-  </p>
-</div>
+            <p className="font-semibold text-amber-900">
+              Planned Courses — Enrollment Not Yet Open
+            </p>
 
-<div className="mt-12 grid gap-7 md:grid-cols-3">
+            <p className="mt-2 text-sm leading-6 text-amber-800">
+              These courses are under development. Course availability,
+              enrollment dates, fees, and requirements will be announced when
+              confirmed.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-7 md:grid-cols-3">
             {programs.map((program) => (
               <article
                 key={program.number}
@@ -154,6 +154,15 @@ export default function AcademyPage() {
                 <p className="mt-6 inline-block rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800">
                   {program.label}
                 </p>
+
+                {program.number === "01" && (
+                  <Link
+                    href="/academy/introduction-to-the-bible"
+                    className="mt-6 inline-flex items-center font-semibold text-blue-700 transition hover:text-blue-900"
+                  >
+                    Explore Course →
+                  </Link>
+                )}
               </article>
             ))}
           </div>
