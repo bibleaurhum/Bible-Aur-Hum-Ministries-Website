@@ -155,14 +155,34 @@ export default function AcademyPage() {
                   {program.label}
                 </p>
 
-                {program.number === "01" && (
-                  <Link
-                    href="/academy/introduction-to-the-bible"
-                    className="mt-6 inline-flex items-center font-semibold text-blue-700 transition hover:text-blue-900"
-                  >
-                    Explore Course →
-                  </Link>
-                )}
+                
+{(() => {
+  const paths: Record<string, string> = {
+    "01": "/academy/introduction-to-the-bible",
+    "02": "/academy/foundations-of-christian-doctrine",
+    "03": "/academy/how-to-interpret-the-bible",
+    "04": "/academy/christian-apologetics",
+    "05": "/academy/life-and-teachings-of-jesus-christ",
+    "06": "/academy/christian-ministry-and-leadership",
+  };
+  return null;
+})()}
+{program.number && (
+  <Link
+    href={{
+      "01": "/academy/introduction-to-the-bible",
+      "02": "/academy/foundations-of-christian-doctrine",
+      "03": "/academy/how-to-interpret-the-bible",
+      "04": "/academy/christian-apologetics",
+      "05": "/academy/life-and-teachings-of-jesus-christ",
+      "06": "/academy/christian-ministry-and-leadership",
+    }[program.number]!}
+    className="mt-6 inline-flex items-center font-semibold text-blue-700 transition hover:text-blue-900"
+  >
+    Explore Course →
+  </Link>
+)}
+
               </article>
             ))}
           </div>
