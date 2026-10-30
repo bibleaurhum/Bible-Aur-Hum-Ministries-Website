@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -50,36 +51,35 @@ export default function Header() {
           : "bg-white"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-        {/* Logo */}
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-6 px-6 py-4">
+
+        {/* Logo and Ministry Name */}
         <Link
           href="/"
-          className="flex min-w-0 items-center gap-2 sm:gap-3"
+          className="flex w-[220px] shrink-0 flex-col items-center text-center"
           onClick={() => setMenuOpen(false)}
         >
           <Image
             src="/images/logo.png"
             alt="Bible Aur Hum Logo"
-            width={70}
-            height={70}
-            className="h-12 w-12 shrink-0 rounded-full object-contain sm:h-[70px] sm:w-[70px]"
+            width={80}
+            height={80}
+            className="h-20 w-20 object-contain"
             priority
           />
 
-          <div className="min-w-0">
-            <h1 className="text-lg font-bold leading-tight text-blue-700 sm:text-2xl">
-              Bible Aur Hum
-            </h1>
+          <h1 className="mt-2 whitespace-nowrap text-xl font-bold leading-tight text-blue-700">
+            Bible Aur Hum
+          </h1>
 
-            <p className="text-xs text-gray-500 sm:text-sm">
-              Ministries Foundation
-            </p>
-          </div>
+          <p className="mt-1 whitespace-nowrap text-base text-gray-600">
+            Ministry Foundation
+          </p>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav aria-label="Main navigation" className="hidden lg:block">
-          <ul className="flex items-center gap-4 font-medium text-gray-700 xl:gap-7">
+        <nav aria-label="Main navigation" className="hidden xl:block">
+          <ul className="flex items-center gap-5 font-medium text-gray-700">
             {navigationLinks.map((item) => (
               <li key={item.href}>
                 <Link
@@ -94,7 +94,7 @@ export default function Header() {
             <li>
               <Link
                 href="/support"
-                className="whitespace-nowrap rounded-lg bg-red-600 px-5 py-2 font-semibold text-white transition hover:bg-red-700"
+                className="whitespace-nowrap rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700"
               >
                 Support
               </Link>
@@ -105,7 +105,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-800 transition hover:bg-gray-100 lg:hidden"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-800 transition hover:bg-gray-100 xl:hidden"
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
@@ -150,7 +150,7 @@ export default function Header() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          className="max-h-[calc(100dvh-76px)] overflow-y-auto border-t border-gray-100 bg-white px-4 pb-6 pt-3 shadow-lg lg:hidden"
+          className="max-h-[calc(100dvh-76px)] overflow-y-auto border-t border-gray-100 bg-white px-4 pb-6 pt-3 shadow-lg xl:hidden"
         >
           <ul className="mx-auto flex max-w-7xl flex-col gap-1">
             {navigationLinks.map((item) => (
