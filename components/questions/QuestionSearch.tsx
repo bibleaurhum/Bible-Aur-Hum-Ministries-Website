@@ -1,6 +1,6 @@
+
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 
 type Question = {
@@ -21,40 +21,26 @@ type QuestionCategory = {
 type QuestionSearchProps = {
   questions: Question[];
   categories: QuestionCategory[];
+  search: string;
+  category: string;
+  totalQuestions: number;
 };
 
 export default function QuestionSearch({
   questions,
-  categories: allCategories,
+  categories,
+  search,
+  category,
+  totalQuestions,
 }: QuestionSearchProps) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All Categories");
-
-  const categories = [
-  "All Categories",
-  ...allCategories.map((category) => category.name).sort(),
-];
-
-  const filteredQuestions = questions.filter((question) => {
-    const searchText = search.toLowerCase().trim();
-
-    const matchesSearch =
-      !searchText ||
-      question.title.toLowerCase().includes(searchText) ||
-      question.shortAnswer.toLowerCase().includes(searchText) ||
-      question.category.name.toLowerCase().includes(searchText);
-
-    const matchesCategory =
-      category === "All Categories" ||
-      question.category.name === category;
-
-    return matchesSearch && matchesCategory;
-  });
-
   return (
     <div className="mt-16">
       {/* Search and Category Filter */}
-      <div className="mx-auto grid max-w-4xl gap-4 md:grid-cols-[1fr_240px]">
+      <form
+        method="GET"
+        action="/questions"
+        className="mx-auto grid max-w-4xl gap-4 md:grid-cols-[1fr_240px]"
+      >
         <div>
           <label
             htmlFor="question-search"
@@ -65,10 +51,10 @@ export default function QuestionSearch({
 
           <input
             id="question-search"
+            name="search"
             type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search questions, topics, or categories..."
+            defaultValue={search}
+            placeholder="Search questions, topics, or Bible references..."
             className="w-full rounded-xl border border-gray-300 bg-white px-5 py-4 text-lg shadow-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
           />
         </div>
@@ -83,33 +69,44 @@ export default function QuestionSearch({
 
           <select
             id="question-category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            name="category"
+            defaultValue={category}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-4 text-gray-800 shadow-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
           >
-            {categories.map((categoryName) => (
-              <option key={categoryName} value={categoryName}>
-                {categoryName}
+            <option value="">All Categories</option>
+
+            {categories.map((item) => (
+              <option key={item.slug} value={item.slug}>
+                {item.name}
               </option>
             ))}
           </select>
         </div>
-      </div>
+
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            className="rounded-xl bg-blue-700 px-8 py-3 font-semibold text-white transition hover:bg-blue-800"
+          >
+            Search Questions
+          </button>
+        </div>
+      </form>
 
       {/* Results Count */}
       <div className="mx-auto mt-8 max-w-4xl">
         <p className="text-gray-600">
-          Showing{" "}
+          Found{" "}
           <span className="font-semibold text-gray-900">
-            {filteredQuestions.length}
+            {totalQuestions}
           </span>{" "}
-          {filteredQuestions.length === 1 ? "question" : "questions"}
+          {totalQuestions === 1 ? "question" : "questions"}
         </p>
       </div>
 
       {/* Results */}
       <div className="mx-auto mt-6 max-w-4xl">
-        {filteredQuestions.length === 0 ? (
+        {questions.length === 0 ? (
           <div className="rounded-xl bg-gray-50 p-10 text-center">
             <h2 className="text-2xl font-bold text-gray-800">
               No questions found
@@ -121,7 +118,7 @@ export default function QuestionSearch({
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredQuestions.map((question) => (
+            {questions.map((question) => (
               <Link
                 key={question.id}
                 href={`/questions/${question.slug}`}

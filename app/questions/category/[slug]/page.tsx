@@ -1,7 +1,9 @@
+
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+
 export async function generateMetadata({
   params,
 }: {
@@ -29,14 +31,25 @@ export async function generateMetadata({
       `Explore biblical questions and answers about ${category.name}.`,
   };
 }
+
 type Props = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    page?: string;
+  }>;
 };
 
-export default async function CategoryPage({ params }: Props) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: Props) {
   const { slug } = await params;
+  const { page = "1" } = await searchParams;
+
+  const currentPage = Math.max(Number(page) || 1, 1);
+  const pageSize = 20;
 
   const category = await prisma.category.findUnique({
     where: {
@@ -50,13 +63,28 @@ export default async function CategoryPage({ params }: Props) {
         orderBy: {
           createdAt: "desc",
         },
+        skip: (currentPage - 1) * pageSize,
+        take: pageSize,
+      },
+      _count: {
+        select: {
+          questions: {
+            where: {
+              status: "PUBLISHED",
+            },
+          },
+        },
       },
     },
   });
 
   if (!category) {
-  notFound();
-}
+    notFound();
+  }
+
+  const totalQuestions = category._count.questions;
+  const totalPages = Math.ceil(totalQuestions / pageSize);
+
   return (
     <main className="min-h-screen bg-gray-50 py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -74,8 +102,12 @@ export default async function CategoryPage({ params }: Props) {
           </p>
         )}
 
+        <p className="mt-6 text-gray-600">
+          {totalQuestions} Published Questions
+        </p>
+
         <div className="mt-12 space-y-6">
-          {category.questions.map((question: { id: number; slug: string; title: string; shortAnswer: string | null }) => (
+          {category.questions.map((question) => (
             <Link
               key={question.id}
               href={`/questions/${question.slug}`}
@@ -107,6 +139,37 @@ export default async function CategoryPage({ params }: Props) {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-12 flex items-center justify-between">
+            {currentPage > 1 ? (
+              <Link
+                href={`/questions/category/${slug}?page=${currentPage - 1}`}
+                className="rounded-lg border bg-white px-5 py-3 font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+              >
+                ← Previous
+              </Link>
+            ) : (
+              <div />
+            )}
+
+            <span className="text-sm font-medium text-gray-600">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            {currentPage < totalPages ? (
+              <Link
+                href={`/questions/category/${slug}?page=${currentPage + 1}`}
+                className="rounded-lg bg-blue-700 px-5 py-3 font-medium text-white shadow-sm transition hover:bg-blue-800"
+              >
+                Next →
+              </Link>
+            ) : (
+              <div />
+            )}
+          </div>
+        )}
       </div>
     </main>
   );

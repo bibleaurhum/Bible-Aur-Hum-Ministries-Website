@@ -4,23 +4,49 @@ import QuestionSearch from "@/components/questions/QuestionSearch";
 export default async function QuestionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{
-    page?: string;
-  }>;
+ searchParams: Promise<{
+  page?: string;
+  search?: string;
+  category?: string;
+}>;
 }) {
-    const { page = "1" } = await searchParams;
+    const {
+  page = "1",
+  search = "",
+  category = "",
+} = await searchParams;
 
   const currentPage = Math.max(Number(page) || 1, 1);
+  const paginationParams = new URLSearchParams();
+
+if (search.trim()) paginationParams.set("search", search.trim());
+if (category) paginationParams.set("category", category);
   const pageSize = 20;
+  const questionWhere = {
+  status: "PUBLISHED" as const,
+  ...(search.trim()
+    ? {
+        OR: [
+          { title: { contains: search.trim(), mode: "insensitive" as const } },
+          { shortAnswer: { contains: search.trim(), mode: "insensitive" as const } },
+          { answer: { contains: search.trim(), mode: "insensitive" as const } },
+          { bibleReferences: { contains: search.trim(), mode: "insensitive" as const } },
+        ],
+      }
+    : {}),
+  ...(category
+    ? {
+        category: {
+          slug: category,
+        },
+      }
+    : {}),
+};
   const totalQuestions = await prisma.question.count({
-  where: {
-    status: "PUBLISHED",
-  },
+  where: questionWhere,
 });
   const questions = await prisma.question.findMany({
-  where: {
-    status: "PUBLISHED",
-  },
+  where: questionWhere,
 
   skip: (currentPage - 1) * pageSize,
   take: pageSize,
@@ -32,11 +58,22 @@ export default async function QuestionsPage({
       createdAt: "desc",
     },
   });
-  const allCategories = await prisma.category.findMany({
-    orderBy: {
-      name: "asc",
+ const allCategories = await prisma.category.findMany({
+  orderBy: {
+    name: "asc",
+  },
+  include: {
+    _count: {
+      select: {
+        questions: {
+          where: {
+            status: "PUBLISHED",
+          },
+        },
+      },
     },
-  });
+  },
+});
   const categories = questions.reduce(
     (groups, question) => {
       const categoryName = question.category.name;
@@ -87,6 +124,9 @@ export default async function QuestionsPage({
 <QuestionSearch
   questions={questions}
   categories={allCategories}
+  search={search}
+  category={category}
+  totalQuestions={totalQuestions}
 />
         {/* Total Questions */}
 
@@ -108,62 +148,41 @@ export default async function QuestionsPage({
 
         {/* Categories */}
 
-        <div className="mt-20 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+<div className="mt-20 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
-          {Object.entries(categories).map(
-            ([categoryName, categoryData]) => (
+  {allCategories
+    .filter((category) => category._count.questions > 0)
+    .map((category) => (
 
-              <div
-                key={categoryName}
-                className="rounded-2xl bg-white p-8 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
-              >
+      <div
+        key={category.id}
+        className="rounded-2xl bg-white p-8 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+      >
 
-                <h2 className="text-2xl font-bold text-blue-700">
-                  {categoryName}
-                </h2>
+        <h2 className="text-2xl font-bold text-blue-700">
+          {category.name}
+        </h2>
 
-                <p className="mt-2 text-gray-500">
-                  {categoryData.questions.length} Questions
-                </p>
+        <p className="mt-2 text-gray-500">
+          {category._count.questions} Questions
+        </p>
 
-                <ul className="mt-6 space-y-3">
+        <Link
+          href={`/questions/category/${category.slug}`}
+          className="mt-8 inline-block rounded-lg bg-blue-700 px-5 py-2 text-white transition hover:bg-blue-800"
+        >
+          View All →
+        </Link>
 
-                  {categoryData.questions
-                    .slice(0, 5)
-                    .map((question) => (
+      </div>
 
-                      <li key={question.id}>
+    ))}
 
-                        <Link
-                          href={`/questions/${question.slug}`}
-                          className="text-gray-700 transition hover:text-red-600"
-                        >
-                          • {question.title}
-                        </Link>
-
-                      </li>
-
-                    ))}
-
-                </ul>
-
-                <Link
-                  href={`/questions/category/${categoryData.slug}`}
-                  className="mt-8 inline-block rounded-lg bg-blue-700 px-5 py-2 text-white transition hover:bg-blue-800"
-                >
-                  View All →
-                </Link>
-
-              </div>
-
-            )
-          )}
-
-        </div>
+</div>
 
         {/* Empty State */}
 
-        {questions.length === 0 && (
+        {questions.length === 0 && !search.trim() && !category && (
           <div className="mt-20 text-center">
 
             <h2 className="text-2xl font-bold text-gray-800">
@@ -183,7 +202,11 @@ export default async function QuestionsPage({
         <div className="mt-12 flex items-center justify-between">
           {currentPage > 1 ? (
             <Link
-              href={`/questions?page=${currentPage - 1}`}
+              href={`/questions?${new URLSearchParams({
+  search: search.trim(),
+  category,
+  page: String(currentPage - 1),
+}).toString()}`}
               className="rounded-lg border bg-white px-5 py-3 font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
             >
               ← Previous
@@ -198,7 +221,11 @@ export default async function QuestionsPage({
 
           {questions.length === pageSize ? (
             <Link
-              href={`/questions?page=${currentPage + 1}`}
+              href={`/questions?${new URLSearchParams({
+  search: search.trim(),
+  category,
+  page: String(currentPage + 1),
+}).toString()}`}
               className="rounded-lg bg-blue-700 px-5 py-3 font-medium text-white shadow-sm transition hover:bg-blue-800"
             >
               Next →
