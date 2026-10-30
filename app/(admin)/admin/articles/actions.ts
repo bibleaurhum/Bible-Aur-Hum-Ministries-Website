@@ -1,88 +1,61 @@
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
+}
 
 export async function createArticle(formData: FormData) {
+  await requireAdmin();
+
   const title = String(formData.get("title") || "").trim();
-  const slug = String(formData.get("slug") || "")
-    .trim()
-    .toLowerCase();
+  const slug = String(formData.get("slug") || "").trim().toLowerCase();
 
-  const shortDescription = String(
-    formData.get("shortDescription") || ""
-  ).trim();
+  const shortDescription = String(formData.get("shortDescription") || "").trim();
+  const content = String(formData.get("content") || "").trim();
+  const featuredImage = String(formData.get("featuredImage") || "").trim();
+  const bibleReference = String(formData.get("bibleReference") || "").trim();
+  const seoTitle = String(formData.get("seoTitle") || "").trim();
+  const seoDescription = String(formData.get("seoDescription") || "").trim();
 
-  const content = String(
-    formData.get("content") || ""
-  ).trim();
+  const categoryId = Number(formData.get("categoryId"));
+  const status = String(formData.get("status") || "DRAFT");
+  const featured = formData.get("featured") === "on";
 
-  const featuredImage = String(
-    formData.get("featuredImage") || ""
-  ).trim();
+  if (!title) throw new Error("Article title is required.");
+  if (!slug) throw new Error("Slug is required.");
+  if (!categoryId) throw new Error("Category is required.");
 
-  const bibleReference = String(
-    formData.get("bibleReference") || ""
-  ).trim();
-
-  const seoTitle = String(
-    formData.get("seoTitle") || ""
-  ).trim();
-
-  const seoDescription = String(
-    formData.get("seoDescription") || ""
-  ).trim();
-
-  const categoryId = Number(
-    formData.get("categoryId")
-  );
-
-  const status = String(
-    formData.get("status") || "DRAFT"
-  );
-
-  const featured =
-    formData.get("featured") === "on";
-
-  if (!title) {
-    throw new Error("Article title is required.");
-  }
-
-  if (!slug) {
-    throw new Error("Slug is required.");
-  }
-
-  if (!categoryId) {
-    throw new Error("Category is required.");
-  }
-
-  const existingArticle =
-    await prisma.article.findUnique({
-      where: {
-        slug,
-      },
-    });
+  const existingArticle = await prisma.article.findUnique({
+    where: { slug },
+  });
 
   if (existingArticle) {
-    throw new Error(
-      "An article with this slug already exists."
-    );
+    throw new Error("An article with this slug already exists.");
   }
 
   await prisma.article.create({
     data: {
       title,
       slug,
-      shortDescription:
-        shortDescription || null,
+      shortDescription: shortDescription || null,
       content: content || null,
-      featuredImage:
-        featuredImage || null,
-      bibleReference:
-        bibleReference || null,
+      featuredImage: featuredImage || null,
+      bibleReference: bibleReference || null,
       seoTitle: seoTitle || null,
-      seoDescription:
-        seoDescription || null,
+      seoDescription: seoDescription || null,
       categoryId,
       status: status as any,
       featured,
@@ -92,96 +65,49 @@ export async function createArticle(formData: FormData) {
   redirect("/admin/articles");
 }
 
-export async function updateArticle(
-  id: number,
-  formData: FormData
-) {
+export async function updateArticle(id: number, formData: FormData) {
+  await requireAdmin();
+
   const title = String(formData.get("title") || "").trim();
+  const slug = String(formData.get("slug") || "").trim().toLowerCase();
 
-  const slug = String(formData.get("slug") || "")
-    .trim()
-    .toLowerCase();
+  const shortDescription = String(formData.get("shortDescription") || "").trim();
+  const content = String(formData.get("content") || "").trim();
+  const featuredImage = String(formData.get("featuredImage") || "").trim();
+  const bibleReference = String(formData.get("bibleReference") || "").trim();
+  const seoTitle = String(formData.get("seoTitle") || "").trim();
+  const seoDescription = String(formData.get("seoDescription") || "").trim();
 
-  const shortDescription = String(
-    formData.get("shortDescription") || ""
-  ).trim();
+  const categoryId = Number(formData.get("categoryId"));
+  const status = String(formData.get("status") || "DRAFT");
+  const featured = formData.get("featured") === "on";
 
-  const content = String(
-    formData.get("content") || ""
-  ).trim();
+  if (!title) throw new Error("Article title is required.");
+  if (!slug) throw new Error("Slug is required.");
+  if (!categoryId) throw new Error("Category is required.");
 
-  const featuredImage = String(
-    formData.get("featuredImage") || ""
-  ).trim();
-
-  const bibleReference = String(
-    formData.get("bibleReference") || ""
-  ).trim();
-
-  const seoTitle = String(
-    formData.get("seoTitle") || ""
-  ).trim();
-
-  const seoDescription = String(
-    formData.get("seoDescription") || ""
-  ).trim();
-
-  const categoryId = Number(
-    formData.get("categoryId")
-  );
-
-  const status = String(
-    formData.get("status") || "DRAFT"
-  );
-
-  const featured =
-    formData.get("featured") === "on";
-
-  if (!title) {
-    throw new Error("Article title is required.");
-  }
-
-  if (!slug) {
-    throw new Error("Slug is required.");
-  }
-
-  if (!categoryId) {
-    throw new Error("Category is required.");
-  }
-
-  const existingArticle =
-    await prisma.article.findFirst({
-      where: {
-        slug,
-        NOT: {
-          id,
-        },
-      },
-    });
+  const existingArticle = await prisma.article.findFirst({
+    where: {
+      slug,
+      NOT: { id },
+    },
+  });
 
   if (existingArticle) {
-    throw new Error(
-      "An article with this slug already exists."
-    );
+    throw new Error("An article with this slug already exists.");
   }
 
   await prisma.article.update({
-    where: {
-      id,
-    },
+    where: { id },
     data: {
       title,
       slug,
-      shortDescription:
-        shortDescription || null,
+      shortDescription: shortDescription || null,
       content: content || null,
-      featuredImage:
-        featuredImage || null,
-      bibleReference:
-        bibleReference || null,
+      featuredImage: featuredImage || null,
+      bibleReference: bibleReference || null,
       seoTitle: seoTitle || null,
-      seoDescription:
-        seoDescription || null,
+      seoDescription: seoDescription || null,
       categoryId,
       status: status as any,
       featured,

@@ -1,9 +1,25 @@
-﻿"use server";
+﻿
+"use server";
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
+}
 
 export async function createLecture(formData: FormData) {
+  await requireAdmin();
+
   const title = String(formData.get("title") || "").trim();
   const slug = String(formData.get("slug") || "").trim().toLowerCase();
   const shortDescription = String(formData.get("shortDescription") || "").trim();
@@ -54,10 +70,9 @@ export async function createLecture(formData: FormData) {
   redirect("/admin/lectures");
 }
 
-export async function updateLecture(
-  id: number,
-  formData: FormData
-) {
+export async function updateLecture(id: number, formData: FormData) {
+  await requireAdmin();
+
   const title = String(formData.get("title") || "").trim();
   const slug = String(formData.get("slug") || "").trim().toLowerCase();
   const shortDescription = String(formData.get("shortDescription") || "").trim();
@@ -81,9 +96,7 @@ export async function updateLecture(
   const existingLecture = await prisma.lecture.findFirst({
     where: {
       slug,
-      NOT: {
-        id,
-      },
+      NOT: { id },
     },
   });
 
@@ -92,9 +105,7 @@ export async function updateLecture(
   }
 
   await prisma.lecture.update({
-    where: {
-      id,
-    },
+    where: { id },
     data: {
       title,
       slug,

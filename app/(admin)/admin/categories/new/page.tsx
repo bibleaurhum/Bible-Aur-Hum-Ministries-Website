@@ -1,9 +1,20 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export default function NewCategoryPage() {
   async function createCategory(formData: FormData) {
-    "use server";
+  "use server";
+
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
 
     const name = formData.get("name") as string;
     const slug = formData.get("slug") as string;

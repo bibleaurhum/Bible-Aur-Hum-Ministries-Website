@@ -3,6 +3,19 @@
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
+}
 
 function slugify(text: string) {
   return text
@@ -14,6 +27,8 @@ function slugify(text: string) {
 }
 
 export async function createQuestion(formData: FormData) {
+  await requireAdmin();
+
   const title = formData.get("title") as string;
   const slug = formData.get("slug") as string;
   const shortAnswer = formData.get("shortAnswer") as string;
@@ -31,7 +46,6 @@ export async function createQuestion(formData: FormData) {
     | "PUBLISHED"
     | "ARCHIVED";
 
-  // Read typed tag names and selected existing tag IDs.
   const typedTags = (formData.get("newTags")?.toString() || "")
     .split(",")
     .map((name) => name.trim())
@@ -42,7 +56,6 @@ export async function createQuestion(formData: FormData) {
     .map((id) => Number(id))
     .filter((id) => Number.isInteger(id) && id > 0);
 
-  // Create missing tags and reuse existing ones.
   const tagIds = new Set(selectedTagIds);
 
   for (const name of typedTags) {
@@ -92,6 +105,8 @@ export async function deleteQuestion(
   questionId: number,
   _formData: FormData
 ) {
+  await requireAdmin();
+
   await prisma.question.delete({
     where: {
       id: questionId,

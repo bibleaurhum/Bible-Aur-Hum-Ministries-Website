@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -10,7 +12,16 @@ export default async function CategoriesPage() {
   });
 
   async function deleteCategory(formData: FormData) {
-    "use server";
+  "use server";
+
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
 
     const id = Number(formData.get("id"));
 

@@ -1,7 +1,21 @@
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
+}
 
 function slugify(text: string) {
   return text
@@ -13,6 +27,8 @@ function slugify(text: string) {
 }
 
 export async function createTag(formData: FormData) {
+  await requireAdmin();
+
   const name = formData.get("name")?.toString().trim() || "";
 
   if (!name) {
@@ -23,10 +39,7 @@ export async function createTag(formData: FormData) {
 
   const existing = await prisma.tag.findFirst({
     where: {
-      OR: [
-        { name },
-        { slug },
-      ],
+      OR: [{ name }, { slug }],
     },
   });
 
@@ -44,10 +57,9 @@ export async function createTag(formData: FormData) {
   redirect("/admin/tags");
 }
 
-export async function updateTag(
-  id: number,
-  formData: FormData
-) {
+export async function updateTag(id: number, formData: FormData) {
+  await requireAdmin();
+
   const name = formData.get("name")?.toString().trim() || "";
 
   if (!name) {
@@ -57,39 +69,32 @@ export async function updateTag(
   const slug = slugify(name);
 
   const existing = await prisma.tag.findFirst({
-  where: {
-    id: {
-      not: id,
+    where: {
+      id: { not: id },
+      OR: [{ name }, { slug }],
     },
-    OR: [
-      { name },
-      { slug },
-    ],
-  },
-});
+  });
 
-if (existing) {
-  throw new Error("Another tag with this name already exists.");
-}
+  if (existing) {
+    throw new Error("Another tag with this name already exists.");
+  }
 
-await prisma.tag.update({
-  where: {
-    id,
-  },
-  data: {
-    name,
-    slug,
-  },
-});
+  await prisma.tag.update({
+    where: { id },
+    data: {
+      name,
+      slug,
+    },
+  });
 
   redirect("/admin/tags");
 }
 
 export async function deleteTag(id: number) {
+  await requireAdmin();
+
   await prisma.tag.delete({
-    where: {
-      id,
-    },
+    where: { id },
   });
 
   redirect("/admin/tags");

@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import BibleStudyForm from "@/components/admin/BibleStudyForm";
 import { redirect } from "next/navigation";
@@ -17,7 +19,16 @@ export default async function NewBibleStudyPage() {
   ]);
 
   async function createBibleStudy(formData: FormData) {
-    "use server";
+  "use server";
+
+  const session = await getServerSession(authOptions);
+
+  if (
+    session?.user?.email?.toLowerCase() !==
+    "bibleaurhum@gmail.com"
+  ) {
+    throw new Error("Unauthorized access.");
+  }
 
     const title = String(formData.get("title") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
