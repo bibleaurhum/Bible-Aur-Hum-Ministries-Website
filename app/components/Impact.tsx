@@ -1,3 +1,4 @@
+
 import {
   BookOpen,
   PlayCircle,
@@ -44,7 +45,7 @@ export default function Impact() {
             <BookOpen className="mx-auto w-14 h-14 text-yellow-300" />
 
             <h3 className="mt-6 text-5xl font-extrabold">
-              200+
+              300+
             </h3>
 
             <p className="mt-3 text-lg text-blue-100">
@@ -60,7 +61,7 @@ export default function Impact() {
             <PlayCircle className="mx-auto w-14 h-14 text-red-300" />
 
             <h3 className="mt-6 text-5xl font-extrabold">
-              200K+
+              500K+
             </h3>
 
             <p className="mt-3 text-lg text-blue-100">
@@ -76,7 +77,7 @@ export default function Impact() {
             <Users className="mx-auto w-14 h-14 text-green-300" />
 
             <h3 className="mt-6 text-5xl font-extrabold">
-              2.5K+
+              1M+
             </h3>
 
             <p className="mt-3 text-lg text-blue-100">
