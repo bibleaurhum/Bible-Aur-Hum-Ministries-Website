@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
@@ -15,12 +16,10 @@ export async function generateMetadata({
   const { slug } = await params;
 
   const question = await prisma.question.findUnique({
-    where: {
-      slug,
-    },
+    where: { slug },
   });
 
-  if (!question) {
+  if (!question || question.status !== "PUBLISHED") {
     return {
       title: "Question Not Found | Bible Aur Hum",
       description: "This Bible question could not be found.",
@@ -37,16 +36,74 @@ export default async function QuestionPage({ params }: Props) {
   const { slug } = await params;
 
   const question = await prisma.question.findUnique({
-    where: {
-      slug,
-    },
+    where: { slug },
     include: {
       category: true,
+      tags: {
+        select: {
+          tagId: true,
+        },
+      },
     },
   });
 
   if (!question || question.status !== "PUBLISHED") {
     notFound();
+  }
+
+  const tagIds = question.tags.map((item) => item.tagId);
+
+  let relatedQuestions: {
+  id: number;
+  title: string;
+  slug: string;
+  shortAnswer: string;
+}[] = [];
+
+  if (tagIds.length > 0) {
+    relatedQuestions = await prisma.question.findMany({
+      where: {
+        status: "PUBLISHED",
+        id: { not: question.id },
+        tags: {
+          some: {
+            tagId: { in: tagIds },
+          },
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        shortAnswer: true,
+      },
+      orderBy: [
+        { featured: "desc" },
+        { createdAt: "desc" },
+      ],
+      take: 3,
+    });
+  }
+
+  if (relatedQuestions.length === 0) {
+    relatedQuestions = await prisma.question.findMany({
+      where: {
+        status: "PUBLISHED",
+        categoryId: question.categoryId,
+        id: { not: question.id },
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        shortAnswer: true,
+      },
+      orderBy: [
+        { featured: "desc" },
+        { createdAt: "desc" },
+      ],
+      take: 3,
+    });
   }
 
   return (
@@ -62,7 +119,7 @@ export default async function QuestionPage({ params }: Props) {
           {question.title}
         </h1>
 
-        {/* Short Answer */}
+        {/* Quick Answer */}
         <section className="mt-10 rounded-2xl bg-blue-50 p-8 shadow">
           <h2 className="text-2xl font-bold text-blue-700">
             Quick Answer
@@ -73,7 +130,7 @@ export default async function QuestionPage({ params }: Props) {
           </p>
         </section>
 
-        {/* Full Answer */}
+        {/* Biblical Answer */}
         <section className="mt-10 rounded-2xl bg-white p-8 shadow-lg md:p-10">
           <h2 className="text-3xl font-bold text-gray-900">
             Biblical Answer
@@ -84,7 +141,7 @@ export default async function QuestionPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Key Bible References */}
+        {/* Bible References */}
         {question.bibleReferences && (
           <section className="mt-10 rounded-2xl border border-amber-200 bg-amber-50 p-8">
             <h2 className="text-2xl font-bold text-gray-900">
@@ -116,6 +173,41 @@ export default async function QuestionPage({ params }: Props) {
             >
               Watch on YouTube →
             </a>
+          </section>
+        )}
+
+        {/* Related Questions */}
+        {relatedQuestions.length > 0 && (
+          <section className="mt-16">
+            <h2 className="text-3xl font-bold text-gray-900">
+              Related Bible Questions
+            </h2>
+
+            <p className="mt-3 text-gray-600">
+              Explore more biblical questions on related topics.
+            </p>
+
+            <div className="mt-8 grid gap-6 md:grid-cols-3">
+              {relatedQuestions.map((related) => (
+                <Link
+                  key={related.id}
+                  href={`/questions/${related.slug}`}
+                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <h3 className="text-xl font-bold text-blue-700">
+                    {related.title}
+                  </h3>
+
+                  <p className="mt-3 line-clamp-3 text-sm leading-7 text-gray-600">
+                    {related.shortAnswer}
+                  </p>
+
+                  <span className="mt-5 inline-block font-semibold text-red-600">
+                    Read Answer →
+                  </span>
+                </Link>
+              ))}
+            </div>
           </section>
         )}
       </div>
