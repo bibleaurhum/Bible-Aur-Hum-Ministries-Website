@@ -152,9 +152,23 @@ export default async function QuestionPage({ params }: Props) {
               Explore these Scripture passages for further study.
             </p>
 
-            <div className="mt-5 whitespace-pre-line leading-8 text-gray-800">
-              {question.bibleReferences}
-            </div>
+            <div className="mt-5 flex flex-wrap gap-3">
+  {question.bibleReferences
+    .split(";")
+    .map((reference) => reference.trim())
+    .filter(Boolean)
+    .map((reference) => (
+      <a
+        key={reference}
+        href={`https://www.biblegateway.com/passage/?search=${encodeURIComponent(reference)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-lg border border-amber-300 bg-white px-4 py-2 font-medium text-blue-700 transition hover:bg-amber-100 hover:text-blue-900"
+      >
+        {reference} ↗
+      </a>
+    ))}
+</div>
           </section>
         )}
 
