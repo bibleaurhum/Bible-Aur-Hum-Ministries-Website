@@ -11,6 +11,7 @@ const navigationLinks = [
   { href: "/questions", label: "Questions" },
   { href: "/lectures", label: "Lectures" },
   { href: "/bible-study", label: "Bible Study" },
+  { href: "/bible", label: "Bible Reader" },
   { href: "/articles", label: "Articles" },
   { href: "/academy", label: "Academy" },
   { href: "/jobs", label: "Job Opportunities" },
@@ -52,8 +53,6 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-6 px-6 py-4">
-
-        {/* Logo and Ministry Name */}
         <Link
           href="/"
           className="flex w-[220px] shrink-0 flex-col items-center text-center"
@@ -77,7 +76,6 @@ export default function Header() {
           </p>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav aria-label="Main navigation" className="hidden xl:block">
           <ul className="flex items-center gap-5 font-medium text-gray-700">
             {navigationLinks.map((item) => (
@@ -102,7 +100,6 @@ export default function Header() {
           </ul>
         </nav>
 
-        {/* Mobile Menu Button */}
         <button
           type="button"
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-800 transition hover:bg-gray-100 xl:hidden"
@@ -145,7 +142,6 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
       {menuOpen && (
         <nav
           id="mobile-navigation"

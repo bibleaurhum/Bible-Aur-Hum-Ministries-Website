@@ -1,8 +1,10 @@
+
 import "server-only";
 
 import fs from "node:fs";
 import path from "node:path";
 import { toJSON } from "usfm-js";
+import { BIBLE_BOOKS } from "./books";
 
 export type BibleVerse = {
   number: number;
@@ -20,8 +22,8 @@ type UsfmVerseObject = {
 };
 
 const BIBLE_DIRECTORIES: Record<"en" | "ur", string> = {
-  ur: path.join(process.cwd(), "data", "bible", "ur", "usfm"),
-  en: path.join(process.cwd(), "data", "bible", "en", "usfm"),
+  ur: path.join(/*turbopackIgnore: true*/ process.cwd(), "data", "bible", "ur", "usfm"),
+  en: path.join(/*turbopackIgnore: true*/ process.cwd(), "data", "bible", "en", "usfm"),
 };
 
 const BIBLE_FILE_SUFFIXES: Record<"en" | "ur", string> = {
@@ -75,21 +77,23 @@ export function getBibleChapter(
     throw new Error("Invalid Bible chapter number.");
   }
 
-  const matchingFiles = fs
-    .readdirSync(BIBLE_DIRECTORIES[language])
-    .filter((file) => file.endsWith(`${suffix}.usfm`));
-
-  const fileName = matchingFiles.find((file) =>
-    file.includes(`-${normalizedBookCode}${suffix}.usfm`)
+  const bookIndex = BIBLE_BOOKS.findIndex(
+    (book) => book.code === normalizedBookCode
   );
 
-  if (!fileName) {
-    throw new Error(
-      `Bible book not found: ${normalizedBookCode} (${language}).`
-    );
+  if (bookIndex === -1) {
+    throw new Error(`Bible book not found: ${normalizedBookCode}.`);
   }
 
+  const fileNumber = String(bookIndex + 2).padStart(2, "0");
+  const fileName = `${fileNumber}-${normalizedBookCode}${suffix}.usfm`;
+
   const filePath = path.join(BIBLE_DIRECTORIES[language], fileName);
+
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Bible file not found: ${fileName}.`);
+  }
+
   const usfmText = fs.readFileSync(filePath, "utf8");
   const parsedBible = toJSON(usfmText);
 
