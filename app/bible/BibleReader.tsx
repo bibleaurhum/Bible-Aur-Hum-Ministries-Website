@@ -9,6 +9,15 @@ type BibleVerse = {
   text: string;
 };
 
+type BibleSearchResult = {
+  bookCode: string;
+  bookNameEn: string;
+  bookNameUr: string;
+  chapter: number;
+  verse: number;
+  text: string;
+};
+
 type BibleReaderProps = {
   initialLanguage: "en" | "ur";
   initialBook: string;
@@ -28,6 +37,11 @@ export default function BibleReader({
   const [verses, setVerses] = useState(initialVerses);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<BibleSearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
   const selectedBook = BIBLE_BOOKS.find(
     (book) => book.code === bookCode
@@ -68,12 +82,54 @@ export default function BibleReader({
       setVerses(data);
     } catch {
       setError(
-        isUrdu
+        nextLanguage === "ur"
           ? "باب لوڈ نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
           : "Could not load the chapter. Please try again."
       );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function searchVerses(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const query = searchQuery.trim();
+
+    if (query.length < 2) {
+      setSearchError(
+        isUrdu
+          ? "براہِ کرم کم از کم دو حروف لکھیں۔"
+          : "Please enter at least 2 characters."
+      );
+      setSearchResults([]);
+      return;
+    }
+
+    setSearching(true);
+    setSearchError("");
+    setSearchResults([]);
+
+    try {
+      const response = await fetch(
+        `/api/bible/search?language=${language}&q=${encodeURIComponent(query)}&limit=50`
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Search failed.");
+      }
+
+      setSearchResults(data.results as BibleSearchResult[]);
+    } catch {
+      setSearchError(
+        isUrdu
+          ? "تلاش مکمل نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
+          : "Search could not be completed. Please try again."
+      );
+    } finally {
+      setSearching(false);
     }
   }
 
@@ -108,7 +164,6 @@ export default function BibleReader({
 
         {/* Selection Panel */}
         <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-
           <div className="grid gap-5 sm:grid-cols-3">
 
             {/* Language */}
@@ -197,6 +252,90 @@ export default function BibleReader({
           </div>
         </section>
 
+        {/* Bible Search */}
+        <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <h2 className="mb-4 text-xl font-bold text-slate-900">
+            {isUrdu ? "بائبل میں تلاش کریں" : "Search the Bible"}
+          </h2>
+
+          <form onSubmit={searchVerses} className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder={
+                isUrdu
+                  ? "کوئی لفظ یا عبارت لکھیں..."
+                  : "Enter a word or phrase..."
+              }
+              className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-3 text-slate-800 outline-none focus:border-red-500"
+            />
+
+            <button
+              type="submit"
+              disabled={searching}
+              className="rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {searching
+                ? isUrdu ? "تلاش جاری ہے..." : "Searching..."
+                : isUrdu ? "تلاش کریں" : "Search"}
+            </button>
+          </form>
+
+          {searchError && (
+            <p className="mt-4 text-sm text-red-600">
+              {searchError}
+            </p>
+          )}
+
+          {!searching && searchResults.length > 0 && (
+            <div className="mt-6">
+              <p className="mb-3 text-sm font-semibold text-slate-600">
+                {isUrdu
+                  ? `نتائج: ${searchResults.length}`
+                  : `Results: ${searchResults.length}`}
+              </p>
+
+              <div className="max-h-[500px] space-y-3 overflow-y-auto">
+                {searchResults.map((result, index) => (
+                  <button
+                    key={`${result.bookCode}-${result.chapter}-${result.verse}-${index}`}
+                    type="button"
+                    onClick={() =>
+                      loadChapter(language, result.bookCode, result.chapter)
+                    }
+                    className="block w-full rounded-xl border border-slate-200 p-4 text-start transition hover:border-red-300 hover:bg-red-50"
+                  >
+                    <span className="mb-2 block font-bold text-red-700">
+                      {isUrdu
+                        ? `${result.bookNameUr} ${result.chapter}:${result.verse}`
+                        : `${result.bookNameEn} ${result.chapter}:${result.verse}`}
+                    </span>
+
+                    <span
+                      className="block leading-8 text-slate-700"
+                      dir={isUrdu ? "rtl" : "ltr"}
+                    >
+                      {result.text}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!searching &&
+            searchQuery.trim().length >= 2 &&
+            !searchError &&
+            searchResults.length === 0 && (
+              <p className="mt-4 text-sm text-slate-500">
+                {isUrdu
+                  ? "کوئی نتیجہ نہیں ملا۔"
+                  : "No matching verses found."}
+              </p>
+            )}
+        </section>
+
         {/* Chapter Heading */}
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
@@ -206,9 +345,7 @@ export default function BibleReader({
             </h2>
 
             <p className="mt-2 text-sm text-slate-300">
-              {isUrdu
-                ? "مقدس بائبل"
-                : "The Holy Bible"}
+              {isUrdu ? "مقدس بائبل" : "The Holy Bible"}
             </p>
           </div>
 
@@ -228,7 +365,9 @@ export default function BibleReader({
 
             {!loading && !error && verses.length === 0 && (
               <p className="py-12 text-center text-slate-500">
-                {isUrdu ? "اس باب میں کوئی آیت دستیاب نہیں۔" : "No verses available."}
+                {isUrdu
+                  ? "اس باب میں کوئی آیت دستیاب نہیں۔"
+                  : "No verses available."}
               </p>
             )}
 

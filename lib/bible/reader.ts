@@ -122,3 +122,76 @@ export function getBibleChapter(
     })
     .filter((verse) => verse.text.length > 0);
 }
+
+export type BibleSearchResult = {
+  bookCode: string;
+  bookNameEn: string;
+  bookNameUr: string;
+  chapter: number;
+  verse: number;
+  text: string;
+};
+
+export function searchBible(
+  language: "en" | "ur",
+  query: string,
+  limit = 50
+): BibleSearchResult[] {
+  const searchTerm = query.trim().toLocaleLowerCase();
+
+  if (searchTerm.length < 2) {
+    return [];
+  }
+
+  const suffix = BIBLE_FILE_SUFFIXES[language];
+  const results: BibleSearchResult[] = [];
+
+  for (const [bookIndex, book] of BIBLE_BOOKS.entries()) {
+    const fileNumber = String(bookIndex + 2).padStart(2, "0");
+    const fileName = `${fileNumber}-${book.code}${suffix}.usfm`;
+    const filePath = path.join(BIBLE_DIRECTORIES[language], fileName);
+
+    if (!fs.existsSync(filePath)) {
+      continue;
+    }
+
+    const usfmText = fs.readFileSync(filePath, "utf8");
+    const parsedBible = toJSON(usfmText);
+
+    for (const [chapterNumber, chapterData] of Object.entries(
+      parsedBible.chapters ?? {}
+    )) {
+      if (!/^\d+$/.test(chapterNumber)) continue;
+
+      for (const [verseNumber, verseData] of Object.entries(chapterData)) {
+        if (!/^\d+$/.test(verseNumber)) continue;
+
+        const verseObjects =
+          (verseData.verseObjects ?? []) as UsfmVerseObject[];
+
+        const text = extractVerseText(verseObjects)
+          .replace(/\s+/g, " ")
+          .trim();
+
+        if (!text.toLocaleLowerCase().includes(searchTerm)) {
+          continue;
+        }
+
+        results.push({
+          bookCode: book.code,
+          bookNameEn: book.nameEn,
+          bookNameUr: book.nameUr,
+          chapter: Number(chapterNumber),
+          verse: Number(verseNumber),
+          text,
+        });
+
+        if (results.length >= limit) {
+          return results;
+        }
+      }
+    }
+  }
+
+  return results;
+}
