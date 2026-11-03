@@ -17,7 +17,35 @@ type BibleSearchResult = {
   verse: number;
   text: string;
 };
+function highlightSearchTerm(text: string, query: string) {
+  const trimmedQuery = query.trim();
 
+  if (!trimmedQuery) {
+    return text;
+  }
+
+  const escapedQuery = trimmedQuery.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    "\\$&"
+  );
+
+  const parts = text.split(
+    new RegExp(`(${escapedQuery})`, "gi")
+  );
+
+  return parts.map((part, index) =>
+    part.toLocaleLowerCase() === trimmedQuery.toLocaleLowerCase() ? (
+      <mark
+        key={index}
+        className="rounded bg-yellow-200 px-1 font-semibold text-slate-900"
+      >
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+}
 type BibleReaderProps = {
   initialLanguage: "en" | "ur";
   initialBook: string;
@@ -316,7 +344,7 @@ export default function BibleReader({
                       className="block leading-8 text-slate-700"
                       dir={isUrdu ? "rtl" : "ltr"}
                     >
-                      {result.text}
+                      {highlightSearchTerm(result.text, searchQuery)}
                     </span>
                   </button>
                 ))}
