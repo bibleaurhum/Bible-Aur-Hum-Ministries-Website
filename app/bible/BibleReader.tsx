@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { Copy, MessageCircle } from "lucide-react";
 import { BIBLE_BOOKS } from "@/lib/bible/books";
 
 type BibleVerse = {
@@ -76,7 +77,32 @@ export default function BibleReader({
   ) ?? BIBLE_BOOKS[0];
 
   const isUrdu = language === "ur";
+  function shareVerse(verse: BibleVerse) {
+    const reference = `${bookName} ${chapter}:${verse.number}`;
 
+    const text = `${verse.text}\n\n— ${reference}\nBible Aur Hum Ministries`;
+
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  }
+
+  async function copyVerse(verse: BibleVerse) {
+    const reference = `${bookName} ${chapter}:${verse.number}`;
+
+    const text = `${verse.text}\n\n— ${reference}\nBible Aur Hum Ministries`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      alert(isUrdu ? "آیت کاپی ہو گئی!" : "Verse copied successfully!");
+    } catch {
+      alert(
+        isUrdu
+          ? "کاپی نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
+          : "Could not copy the verse. Please try again."
+      );
+    }
+  }
   const oldTestament = BIBLE_BOOKS.filter(
     (book) => book.testament === "OT"
   );
@@ -400,25 +426,53 @@ export default function BibleReader({
             )}
 
             {!loading && !error && verses.length > 0 && (
-              <div className="space-y-5">
-                {verses.map((verse) => (
-                  <p
-                    key={verse.number}
-                    className={`text-lg leading-9 text-slate-800 ${
-                      isUrdu ? "text-right" : "text-left"
-                    }`}
-                    dir={isUrdu ? "rtl" : "ltr"}
-                  >
-                    <span className="me-2 inline-block text-sm font-bold text-red-600">
-                      {verse.number}
-                    </span>
-                    {verse.text}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
+  <div className="space-y-6">
+    {verses.map((verse) => (
+      <div
+        key={verse.number}
+        className="border-b border-slate-100 pb-4 last:border-0"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <p
+            className={`flex-1 text-lg leading-9 text-slate-800 ${
+              isUrdu ? "text-right" : "text-left"
+            }`}
+            dir={isUrdu ? "rtl" : "ltr"}
+          >
+            <span className="me-2 inline-block text-sm font-bold text-red-600">
+              {verse.number}
+            </span>
+            {verse.text}
+          </p>
 
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => copyVerse(verse)}
+              title={isUrdu ? "آیت کاپی کریں" : "Copy verse"}
+              aria-label={isUrdu ? "آیت کاپی کریں" : "Copy verse"}
+              className="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+            >
+              <Copy size={18} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => shareVerse(verse)}
+              title={isUrdu ? "واٹس ایپ پر شیئر کریں" : "Share on WhatsApp"}
+              aria-label={isUrdu ? "واٹس ایپ پر شیئر کریں" : "Share on WhatsApp"}
+              className="rounded-lg border border-slate-200 p-2 text-green-600 transition hover:border-green-300 hover:bg-green-50"
+            >
+              <MessageCircle size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+          </div>
           {/* Previous / Next */}
           <div className="flex items-center justify-between gap-4 border-t border-slate-200 bg-slate-50 p-5">
 
