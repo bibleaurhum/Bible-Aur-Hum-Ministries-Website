@@ -45,6 +45,27 @@ if (category) paginationParams.set("category", category);
   const totalQuestions = await prisma.question.count({
   where: questionWhere,
 });
+const featuredQuestions = await prisma.question.findMany({
+  where: {
+    status: "PUBLISHED",
+    featured: true,
+  },
+  select: {
+    id: true,
+    title: true,
+    slug: true,
+    shortAnswer: true,
+    category: {
+      select: {
+        name: true,
+      },
+    },
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+  take: 6,
+});
   const questions = await prisma.question.findMany({
   where: questionWhere,
 
@@ -121,6 +142,56 @@ if (category) paginationParams.set("category", category);
           </p>
 
         </div>
+{/* Featured Questions */}
+
+{!search.trim() && !category && currentPage === 1 &&
+  featuredQuestions.length > 0 && (
+    <section className="mt-16">
+
+      <div className="mb-8 text-center">
+        <p className="font-semibold uppercase tracking-[0.3em] text-red-600">
+          Featured Questions
+        </p>
+
+        <h2 className="mt-3 text-3xl font-bold text-gray-900">
+          Important Biblical Questions
+        </h2>
+
+        <p className="mt-3 text-gray-600">
+          Explore some of our carefully selected biblical answers.
+        </p>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+        {featuredQuestions.map((question) => (
+          <Link
+            key={question.id}
+            href={`/questions/${question.slug}`}
+            className="group rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+          >
+            <p className="text-sm font-semibold text-red-600">
+              {question.category.name}
+            </p>
+
+            <h3 className="mt-3 text-xl font-bold text-gray-900 transition group-hover:text-blue-700">
+              {question.title}
+            </h3>
+
+            <p className="mt-3 line-clamp-3 leading-7 text-gray-600">
+              {question.shortAnswer}
+            </p>
+
+            <span className="mt-5 inline-block font-semibold text-blue-700">
+              Read Answer →
+            </span>
+          </Link>
+        ))}
+
+      </div>
+    </section>
+  )}
+
 <QuestionSearch
   questions={questions}
   categories={allCategories}
@@ -177,6 +248,7 @@ if (category) paginationParams.set("category", category);
       </div>
 
     ))}
+
 
 </div>
 
