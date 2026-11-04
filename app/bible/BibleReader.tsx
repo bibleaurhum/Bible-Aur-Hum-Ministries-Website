@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { Copy, MessageCircle } from "lucide-react";
 import { BIBLE_BOOKS } from "@/lib/bible/books";
-
+import VerseImageButton from "./VerseImageButton";
 type BibleVerse = {
   number: number;
   text: string;
@@ -457,14 +457,21 @@ export default function BibleReader({
             </button>
 
             <button
-              type="button"
-              onClick={() => shareVerse(verse)}
-              title={isUrdu ? "واٹس ایپ پر شیئر کریں" : "Share on WhatsApp"}
-              aria-label={isUrdu ? "واٹس ایپ پر شیئر کریں" : "Share on WhatsApp"}
-              className="rounded-lg border border-slate-200 p-2 text-green-600 transition hover:border-green-300 hover:bg-green-50"
-            >
-              <MessageCircle size={18} />
-            </button>
+  type="button"
+  onClick={() => shareVerse(verse)}
+  title={isUrdu ? "واٹس ایپ پر شیئر کریں" : "Share on WhatsApp"}
+  aria-label={isUrdu ? "واٹس ایپ پر شیئر کریں" : "Share on WhatsApp"}
+  className="rounded-lg border border-slate-200 p-2 text-green-600 transition hover:border-green-300 hover:bg-green-50"
+>
+  <MessageCircle size={18} />
+</button>
+
+{/* Create Verse Image */}
+<VerseImageButton
+  verseText={verse.text}
+  reference={`${bookName} ${chapter}:${verse.number}`}
+  isUrdu={isUrdu}
+/>
           </div>
         </div>
       </div>
