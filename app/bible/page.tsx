@@ -1,6 +1,5 @@
 
 import type { Metadata } from "next";
-import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import BibleReader from "./BibleReader";
 import { getBibleChapter } from "@/lib/bible/reader";
@@ -19,7 +18,7 @@ export default function BiblePage() {
 
   return (
     <>
-      <Header />
+      
 
       <BibleReader
         initialLanguage="en"
