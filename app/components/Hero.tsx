@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 
 export default function Hero() {
@@ -14,6 +15,7 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-center px-4 sm:px-6">
         <div className="w-full max-w-5xl text-center text-white">
+
           <p className="mx-auto max-w-3xl text-sm font-semibold uppercase leading-relaxed tracking-[0.2em] text-yellow-300 sm:text-base sm:tracking-[0.4em]">
             Bible Aur Hum Ministries Foundation
           </p>
@@ -33,21 +35,35 @@ export default function Hero() {
             خدا کے کلام کی سچائی کی منادی
           </p>
 
-          <div className="mx-auto mt-5 flex w-full max-w-md flex-col justify-center gap-3 sm:mt-14 sm:max-w-none sm:flex-row sm:gap-5">
+          {/* Homepage Action Buttons */}
+          <div className="mx-auto mt-7 grid w-full max-w-md grid-cols-3 gap-2 sm:mt-14 sm:max-w-none sm:flex sm:justify-center sm:gap-5">
+
+            {/* Support Us */}
+            <Link
+              href="/support"
+              className="flex min-h-[64px] items-center justify-center rounded-xl bg-green-700 px-2 py-3 text-center text-sm font-semibold leading-tight transition hover:bg-green-800 sm:min-h-0 sm:flex-1 sm:px-8 sm:py-4 sm:text-lg"
+            >
+              Support Us
+            </Link>
+
+            {/* Request Prayer */}
+            <Link
+              href="/prayer"
+              className="flex min-h-[64px] items-center justify-center rounded-xl border-2 border-white px-2 py-3 text-center text-sm font-semibold leading-tight transition hover:bg-white hover:text-black sm:min-h-0 sm:flex-1 sm:px-8 sm:py-4 sm:text-lg"
+            >
+              Request Prayer
+            </Link>
+
+            {/* Watch Sermons */}
             <Link
               href="/lectures"
-              className="rounded-xl bg-red-600 px-8 py-4 text-center text-lg font-semibold transition hover:bg-red-700"
+              className="flex min-h-[64px] items-center justify-center rounded-xl bg-red-600 px-2 py-3 text-center text-sm font-semibold leading-tight transition hover:bg-red-700 sm:min-h-0 sm:flex-1 sm:px-8 sm:py-4 sm:text-lg"
             >
               Watch Sermons
             </Link>
 
-            <Link
-              href="/prayer"
-              className="rounded-xl border-2 border-white px-8 py-4 text-center text-lg font-semibold transition hover:bg-white hover:text-black"
-            >
-              Request Prayer
-            </Link>
           </div>
+
         </div>
       </div>
     </section>
