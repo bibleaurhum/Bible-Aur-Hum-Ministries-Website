@@ -674,18 +674,18 @@ const content: Record<
 };
 
 const timeline = [
-  {
-    date: "c. 1200–100 BC",
-    dateUr: "تقریباً ۱۲۰۰–۱۰۰ قبل مسیح",
-    title: "Ancient biblical writings",
-    titleUr: "قدیم بائبلی تحریریں",
-    description:
-      "Biblical books were composed and developed over many centuries, primarily in Hebrew with some Aramaic.",
-    descriptionUr:
-      "بائبلی کتابیں کئی صدیوں میں وجود میں آئیں اور ترقی پذیر ہوئیں۔ زیادہ تر عبرانی اور بعض حصے ارامی زبان میں ہیں۔",
-  },
-  {
-    date: "c. 3rd–1st century BC",
+ {
+  date: "Over many centuries",
+  dateUr: "کئی صدیوں کے دوران",
+  title: "Ancient biblical writings",
+  titleUr: "قدیم بائبلی تحریریں",
+  description:
+    "The biblical books were composed, collected, and transmitted over many centuries, primarily in Hebrew, with some portions in Aramaic.",
+  descriptionUr:
+    "بائبل کی کتابیں کئی صدیوں کے دوران لکھی گئیں، جمع کی گئیں اور منتقل ہوتی رہیں۔ ان کی بنیادی زبان عبرانی تھی، جبکہ بعض حصے ارامی زبان میں لکھے گئے۔",
+},
+{
+  date: "c. 3rd–1st century BC",
     dateUr: "تقریباً تیسری تا پہلی صدی قبل مسیح",
     title: "Greek Septuagint",
     titleUr: "یونانی سیپٹواجِنٹ",
