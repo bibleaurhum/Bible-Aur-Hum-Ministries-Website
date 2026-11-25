@@ -102,10 +102,10 @@ const content = {
       "The planned module assessment will include knowledge quizzes and learning activities. The complete certificate program will also include assignments, a Bible interpretation project, and a final examination.",
     passing: "Planned Certificate Passing Mark",
     passingValue: "60%",
-    development: "Course Development in Progress",
+    development: "Course Progress and Enrollment",
     developmentText:
-      "This module is currently being developed. Enrollment is not yet open. Lesson materials, assessment arrangements, enrollment dates, and fees will be announced when confirmed.",
-    qualification:
+  "Lessons 1, 2, and 3 are currently available for study. The remaining lessons are being developed. Enrollment in the complete certificate program is not yet open. Assessment arrangements, enrollment dates, and fees will be announced when confirmed.",
+qualification:
       "The planned Bible Aur Hum Academy award is a certificate of completion. It will not be represented as an accredited academic qualification.",
     contact: "Contact Us",
     explore: "Explore Academy",
@@ -207,10 +207,10 @@ const content = {
       "اس ماڈیول کی مجوزہ جانچ میں علمی کوئز اور تعلیمی سرگرمیاں شامل ہوں گی۔ مکمل سرٹیفکیٹ پروگرام میں اسائنمنٹس، بائبل کی تشریح کا ایک عملی منصوبہ اور آخری امتحان بھی شامل ہوگا۔",
     passing: "سرٹیفکیٹ کے لیے مجوزہ کامیابی کا معیار",
     passingValue: "60%",
-    development: "کورس کی تیاری جاری ہے",
+    development: "کورس کی پیش رفت اور داخلے",
     developmentText:
-      "اس ماڈیول کی تیاری جاری ہے۔ داخلے ابھی شروع نہیں ہوئے۔ اسباق کا مواد، امتحانی انتظامات، داخلے کی تاریخیں اور فیس کی تفصیلات کی تصدیق کے بعد اعلان کیا جائے گا۔",
-    qualification:
+  "اسباق 1، 2 اور 3 مطالعے کے لیے دستیاب ہیں۔ باقی اسباق کی تیاری جاری ہے۔ مکمل سرٹیفکیٹ پروگرام کے لیے داخلے ابھی شروع نہیں ہوئے۔ امتحانی انتظامات، داخلے کی تاریخوں اور فیس کی تفصیلات کی تصدیق کے بعد اعلان کیا جائے گا۔",
+qualification:
       "بائبل اور ہم اکیڈمی کی مجوزہ سند تکمیلِ کورس کا سرٹیفکیٹ ہوگی۔ اسے تسلیم شدہ تعلیمی ڈگری یا ایکریڈیٹڈ تعلیمی سند کے طور پر پیش نہیں کیا جائے گا۔",
     contact: "رابطہ کریں",
     explore: "اکیڈمی دیکھیں",
@@ -367,6 +367,7 @@ export default function IntroductionToTheBiblePage() {
         </div>
       </section>
 
+      
       {/* Lessons */}
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">
@@ -383,30 +384,48 @@ export default function IntroductionToTheBiblePage() {
           </p>
 
           <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {t.lessonNames.map((lesson, index) => (
-              <article
-                key={lesson.urdu}
-                className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
-              >
-                <p className="text-sm font-bold tracking-widest text-blue-700">
-                  {isUrdu ? `سبق ${index + 1}` : `LESSON ${String(index + 1).padStart(2, "0")}`}
-                </p>
+            {t.lessonNames.map((lesson, index) => {
+              const completedLessons = [1, 2, 3];
+              const isAvailable = completedLessons.includes(index + 1);
 
-                <h3 className="mt-3 text-xl font-bold">
-                  {isUrdu ? lesson.urdu : lesson.title}
-                </h3>
+              const lessonUrl = `/academy/introduction-to-the-bible/lesson-${index + 1}`;
 
-                <p className="mt-3 leading-7 text-gray-600">
-                  {lesson.description}
-                </p>
+              return (
+                <article
+                  key={lesson.urdu}
+                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+                >
+                  <p className="text-sm font-bold tracking-widest text-blue-700">
+                    {isUrdu
+                      ? `سبق ${index + 1}`
+                      : `LESSON ${String(index + 1).padStart(2, "0")}`}
+                  </p>
 
-                <div className="mt-5 border-t border-gray-100 pt-4">
-                  <span className="text-sm font-medium text-amber-700">
-                    {isUrdu ? "تیاری جاری ہے" : "Lesson in development"}
-                  </span>
-                </div>
-              </article>
-            ))}
+                  <h3 className="mt-3 text-xl font-bold">
+                    {isUrdu ? lesson.urdu : lesson.title}
+                  </h3>
+
+                  <p className="mt-3 leading-7 text-gray-600">
+                    {lesson.description}
+                  </p>
+
+                  <div className="mt-5 border-t border-gray-100 pt-4">
+                    {isAvailable ? (
+                      <Link
+                        href={lessonUrl}
+                        className="inline-flex items-center gap-2 font-semibold text-green-700 transition hover:text-green-900"
+                      >
+                        {isUrdu ? "سبق پڑھیں ←" : "Read Lesson →"}
+                      </Link>
+                    ) : (
+                      <span className="text-sm font-medium text-amber-700">
+                        {isUrdu ? "تیاری جاری ہے" : "Lesson in development"}
+                      </span>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
